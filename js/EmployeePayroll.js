@@ -1,4 +1,5 @@
-window.addEventListener('input', function(){
+window.addEventListener('DOMContentLoaded', (event) => {
+    // Event listener for salary
     const salary = document.querySelector('#salary');
     const output = document.querySelector('.salary-output');
     output.textContent = salary.value;
@@ -27,6 +28,13 @@ window.addEventListener('input', function(){
     
         get startDate() { return this._startDate}
         set startDate(startDate){
+            let now = new Date();
+            if(startDate > now) {
+                throw 'Start Date is a Future Date!';
+            }
+            var diff = Math.abs(now.getTime() - startDate.getTime());
+            if(diff / (1000 * 60 * 60 * 24) > 30)
+                throw 'Start Date is beyond 30 days!';
             this._startDate = startDate;
         }
     
@@ -38,7 +46,7 @@ window.addEventListener('input', function(){
                    ", start date = " + empDate;
         }
     }
-    
+    //Populating the employee payroll object
     const createEmployeePayrollData = () => {
         let employeePayrollData = new EmployeePayrollData();
         try{
@@ -61,4 +69,32 @@ window.addEventListener('input', function(){
         return value;
     }
     
+    //Event listener for name
+    const name = document.querySelector('#name');
+    const textError = document.querySelector('.text-error');
+    name.addEventListener('input', function(){
+        if(name.value.length == 0){
+            textError.textContent = "";
+            return;
+        }
+        try{
+            (new EmployeePayrollData()).name = name.value;
+            textError.textContent = "";
+        }catch(e){
+            textError.textContent = e;
+        }
+    });
+
+    //Event listener for date
+    const date = document.querySelector('#date');
+    const dateError = document.querySelector('.date-error');
+    date.addEventListener('input', function() {
+        const startDate = new Date(Date.parse(getInputValueById('#day') + " " + getInputValueById('#month')+" "+getInputValueById('#year')));
+        try{
+            (new EmployeePayrollData()).startDate = startDate;
+            dateError.textContent = "";
+        }catch(e){
+            dateError.textContent = e;
+        }
+    });
 });
