@@ -5,6 +5,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     createInnerHtml();
 });
 
+//Displaying the employee payroll data in tabular format
 const createInnerHtml = () => {
     const headerHtml = "<tr><th></th><th>Name</th><th>Gender</th><th>Department</th><th>Salary</th><th>StartDate</th><th>Actions</th></tr>";
     let innerHtml = `${headerHtml}`;
@@ -35,6 +36,18 @@ const getDeptHtml = (deptList) => {
     return deptHtml;
 }
 
+//Retreiving data from local storage
 const getEmployeePayrollDataFromStorage = () =>{
     return localStorage.getItem('EmployeePayrollList') ? JSON.parse(localStorage.getItem('EmployeePayrollList')) : [];
+}
+
+//Performing the delete operations
+const remove = (node) => {
+    let employeePayrollData = employeePayrollList.find(empData => empData._id == node._id);
+    if(!employeePayrollData) return;
+    const index = employeePayrollList.map(empData => empData._id).indexOf(employeePayrollData._id);
+    employeePayrollList.splice(index, 1);
+    localStorage.setItem("EmployeePayrollList", JSON.stringify(employeePayrollList));
+    document.querySelector(".emp-count").textContent = employeePayrollList.length;
+    createInnerHtml();
 }
