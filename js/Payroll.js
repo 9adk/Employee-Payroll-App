@@ -38,6 +38,7 @@ class EmployeePayrollData {
     get startDate() { return this._startDate}
     set startDate(startDate){
         let now = new Date();
+        startDate = new Date(startDate);
         if(startDate > now) {
             throw 'Start Date is a Future Date!';
         }
@@ -49,11 +50,10 @@ class EmployeePayrollData {
     
     toString() {
         const options = {year : 'numeric', month : 'long', day : 'numeric'};
-        const empDate = this.startDate === undefined ? "undefined" : 
-            this.startDate.toLocaleDateString("en-US", options);
-        return "name = " + this._name + ", gender="+this._gender+
-                ", profilePic="+this._profilePic+", department="+this._department+", salary = " 
-                + this._salary + ", start date = " + this._empDate+", note="+this._note;
+        const empDate =  this.startDate === undefined ? "undefined" : (new Date(this.startDate)).toLocaleDateString('en-US', options);
+        return "id = " + this.id + ", name = " + this.name + ", gender = " + this.gender + 
+                ", salary = " + this.salary + ", ProfilePic = " + this.profilePic + ", department = " + this.department + 
+                ", start date = " + empDate + ", Notes = " + this.note;
     }
 }
 
@@ -95,8 +95,6 @@ window.addEventListener('DOMContentLoaded', () => {
             dateError.textContent = e;
         }
     });
-
-
 });
 
 const save = () => {
@@ -123,7 +121,7 @@ function createAndUpdateStorage(employeePayrollData){
 const createEmployeePayrollData = () => {
     let employeePayrollData = new EmployeePayrollData();
     try{
-        employeePayrollData.name = getInputValueById('#name')
+        employeePayrollData.name = getInputValueById('#name');
     }
     catch(e){
         setTextValue('.text-error', e);
@@ -135,7 +133,7 @@ const createEmployeePayrollData = () => {
     employeePayrollData.salary = getInputValueById('#salary');
     let date = getInputValueById('#day') + " " + getInputValueById('#month') + " " +
                getInputValueById('#year');
-    employeePayrollData.date = Date.parse(date);
+    employeePayrollData.startDate = Date.parse(date);
     employeePayrollData.note = getInputValueById('#notes');
     alert(employeePayrollData.toString());
     return employeePayrollData;
@@ -160,7 +158,7 @@ const resetForm = () => {
     unsetSelectedValues('[name = gender');
     unsetSelectedValues('[name = department');
     unsetSelectedValues('[name = profile');
-    setValue('#salary'. ' ');
+    setValue('#salary', ' ');
     setValue('#day', '1');
     setValue('#month', 'January');
     setValue('#year', '2020');
@@ -176,7 +174,7 @@ const unsetSelectedValues = (propertyValue) => {
 
 const setValue = (id, value)=>{
     const element = document.querySelector(id);
-    element.value = value
+    element.value = value;
 }
 
 const setTextValue = (id, value)=>{
